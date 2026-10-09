@@ -18,12 +18,27 @@ jobs:
           cache-dependency-path: requirements.lock
       - run: pip install -r requirements.lock
       - run: python -m pytest -q
-      - run: bash -n install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh
+      - run: bash -n install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh
       - run: bash tests/test_installer.sh
-      - run: shellcheck -S warning install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh
+      - run: shellcheck -S warning install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh
   docker:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - run: bash tests/docker-smoke.sh
+  installer:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pexpect==4.9.0
+      - run: bash tests/installer-e2e.sh
+      - if: failure()
+        run: |
+          docker ps -a
+          docker logs existing-proxy --tail 50
+          sudo bash /opt/bamdaddesk-control/manage.sh logs || true

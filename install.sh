@@ -80,6 +80,7 @@ trap 'rm -rf -- "$staging"; if [[ -n ${download:-} ]]; then rm -rf -- "$download
 git clone --branch "$RELEASE" --depth 1 "$REPOSITORY" "$staging/source"
 cd "$staging/source"
 source scripts/install-lib.sh
+mode='' domain='' https_port='' proxy_port='' email='' ready=''
 printf '\n1) Automatic HTTPS (public DNS domain, free TCP 80 and chosen HTTPS port)\n2) Existing reverse proxy on this host (loopback backend; configure your proxy separately)\n'
 while :; do
     ask mode 'Mode' 1
