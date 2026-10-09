@@ -13,7 +13,7 @@ https://desk.bamdad.test:18443 {
 EOF
 docker run -d --name existing-proxy --network host -v "$RUNNER_TEMP/Caddyfile.test:/etc/caddy/Caddyfile:ro" caddy:2.11.7-alpine
 started=$(docker inspect --format '{{.State.StartedAt}}' existing-proxy)
-for attempt in {1..30}; do
+for _attempt in {1..30}; do
     if docker cp existing-proxy:/data/caddy/pki/authorities/local/root.crt "$RUNNER_TEMP/bamdad-ci.crt" 2>/dev/null; then break; fi
     sleep 1
 done
@@ -22,6 +22,7 @@ sudo update-ca-certificates
 python tests/installer-e2e.py
 curl -fsS https://desk.bamdad.test:18443/healthz
 sudo bash /opt/bamdaddesk-control/manage.sh backup /tmp/bamdad-ci-backups
+sudo bash -c 'cd /tmp/bamdad-ci-backups && sha256sum --check ./*.sha256'
 sudo tar -tzf /tmp/bamdad-ci-backups/*.tar.gz | grep -q '.env'
 curl -fsS --retry 5 --retry-all-errors --retry-delay 2 https://desk.bamdad.test:18443/healthz
 [[ "$(docker inspect --format '{{.State.StartedAt}}' existing-proxy)" == "$started" ]]

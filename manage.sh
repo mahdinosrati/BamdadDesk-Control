@@ -27,7 +27,7 @@ case "${1:-status}" in
         docker compose stop api
         trap 'docker compose start api >/dev/null' EXIT
         tar -czf "$archive" -C /var/lib bamdaddesk-control -C "$PWD" .env Caddyfile
-        sha256sum "$archive" > "$archive.sha256"
+        (cd "$destination" && sha256sum "$(basename "$archive")" > "$(basename "$archive").sha256")
         printf 'Backup: %s\nSource commit: ' "$archive"
         git rev-parse HEAD | tee "$archive.commit"
         ;;
