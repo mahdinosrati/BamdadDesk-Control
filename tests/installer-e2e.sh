@@ -23,7 +23,7 @@ python tests/installer-e2e.py
 curl -fsS https://desk.bamdad.test:18443/healthz
 sudo bash /opt/bamdaddesk-control/manage.sh backup /tmp/bamdad-ci-backups
 sudo bash -c 'cd /tmp/bamdad-ci-backups && sha256sum --check ./*.sha256'
-sudo tar -tzf /tmp/bamdad-ci-backups/*.tar.gz | grep -q '.env'
+sudo bash -c 'tar -tzf /tmp/bamdad-ci-backups/*.tar.gz' | grep -q '.env'
 curl -fsS --retry 5 --retry-all-errors --retry-delay 2 https://desk.bamdad.test:18443/healthz
 [[ "$(docker inspect --format '{{.State.StartedAt}}' existing-proxy)" == "$started" ]]
 echo 'Interactive install, trusted HTTPS, backup/restart and existing-proxy coexistence passed.'
