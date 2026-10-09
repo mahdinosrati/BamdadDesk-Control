@@ -1,0 +1,442 @@
+[
+  {
+    "key": "enable-keyboard",
+    "en": "Keyboard and mouse",
+    "fa": "صفحه‌کلید و ماوس",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-clipboard",
+    "en": "Clipboard",
+    "fa": "کلیپ‌بورد",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-file-transfer",
+    "en": "File transfer",
+    "fa": "انتقال فایل",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-camera",
+    "en": "Camera",
+    "fa": "دوربین",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-terminal",
+    "en": "Terminal",
+    "fa": "ترمینال",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-audio",
+    "en": "Audio",
+    "fa": "صدا",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-tunnel",
+    "en": "TCP tunneling",
+    "fa": "تونل TCP",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-remote-restart",
+    "en": "Remote restart",
+    "fa": "راه‌اندازی مجدد",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-record-session",
+    "en": "Session recording",
+    "fa": "ضبط نشست",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-block-input",
+    "en": "Block local input",
+    "fa": "مسدود کردن ورودی محلی",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-privacy-mode",
+    "en": "Privacy mode",
+    "fa": "حالت حریم خصوصی",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-remote-printer",
+    "en": "Remote printing (driver required)",
+    "fa": "چاپ ریموت (نیازمند درایور)",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-perm-change-in-accept-window",
+    "en": "Change permissions in accept window",
+    "fa": "تغییر دسترسی در پنجره پذیرش",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-elevate-button-in-accept-window",
+    "en": "Hide elevation button",
+    "fa": "مخفی کردن دکمه ارتقای دسترسی",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-remote-config-modification",
+    "en": "Remote configuration changes",
+    "fa": "تغییر تنظیمات از راه دور",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-lan-discovery",
+    "en": "LAN discovery",
+    "fa": "کشف در شبکه داخلی",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-auto-disconnect",
+    "en": "Idle disconnection",
+    "fa": "قطع اتصال در بیکاری",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-only-conn-window-open",
+    "en": "Require open connection window",
+    "fa": "نیاز به پنجره اتصال باز",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-auto-record-incoming",
+    "en": "Record incoming sessions",
+    "fa": "ضبط نشست‌های ورودی",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-remove-wallpaper",
+    "en": "Remove wallpaper",
+    "fa": "حذف تصویر پس‌زمینه",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "enable-trusted-devices",
+    "en": "Trusted devices",
+    "fa": "دستگاه‌های مورد اعتماد",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "direct-server",
+    "en": "Direct IP access",
+    "fa": "دسترسی مستقیم با IP",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-scope-violation-close",
+    "en": "Close after scope violation",
+    "fa": "بستن پس از خروج از محدوده",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-scope-violation-alarm",
+    "en": "Scope violation alarm",
+    "fa": "هشدار خروج از محدوده",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-general-settings",
+    "en": "Hide general settings",
+    "fa": "مخفی کردن تنظیمات عمومی",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-security-settings",
+    "en": "Hide security settings",
+    "fa": "مخفی کردن تنظیمات امنیت",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-network-settings",
+    "en": "Hide network settings",
+    "fa": "مخفی کردن تنظیمات شبکه",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-server-settings",
+    "en": "Hide server settings",
+    "fa": "مخفی کردن تنظیمات سرور",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-proxy-settings",
+    "en": "Hide proxy settings",
+    "fa": "مخفی کردن تنظیمات پروکسی",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-remote-printer-settings",
+    "en": "Hide printer settings",
+    "fa": "مخفی کردن تنظیمات چاپگر",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-websocket-settings",
+    "en": "Hide WebSocket settings",
+    "fa": "مخفی کردن تنظیمات وب‌سوکت",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "hide-stop-service",
+    "en": "Hide stop service control",
+    "fa": "مخفی کردن توقف سرویس",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-command-line-settings-when-settings-disabled",
+    "en": "Allow CLI settings changes",
+    "fa": "اجازه تغییر تنظیمات با خط فرمان",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-logon-screen-password",
+    "en": "Allow Windows logon password",
+    "fa": "اجازه رمز ورود ویندوز",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-deep-link-password",
+    "en": "Allow passwords in deep links",
+    "fa": "اجازه رمز در لینک مستقیم",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "allow-deep-link-server-settings",
+    "en": "Allow server settings in deep links",
+    "fa": "اجازه سرور در لینک مستقیم",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "one-way-clipboard-redirection",
+    "en": "One-way clipboard restriction",
+    "fa": "محدودیت کلیپ‌بورد یک‌طرفه",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "one-way-file-transfer",
+    "en": "One-way file transfer restriction",
+    "fa": "محدودیت انتقال فایل یک‌طرفه",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "disable-change-id",
+    "en": "Prevent local device ID changes",
+    "fa": "جلوگیری از تغییر شناسه دستگاه",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "disable-unlock-pin",
+    "en": "Disable local unlock PIN",
+    "fa": "غیرفعال کردن پین بازکردن تنظیمات",
+    "values": [
+      "Y",
+      "N"
+    ]
+  },
+  {
+    "key": "verification-method",
+    "en": "verification-method",
+    "fa": "verification-method",
+    "values": [
+      "use-both-passwords",
+      "use-permanent-password",
+      "use-temporary-password"
+    ]
+  },
+  {
+    "key": "approve-mode",
+    "en": "approve-mode",
+    "fa": "approve-mode",
+    "values": [
+      "password",
+      "click",
+      "password-click"
+    ]
+  },
+  {
+    "key": "access-mode",
+    "en": "access-mode",
+    "fa": "access-mode",
+    "values": [
+      "custom"
+    ]
+  },
+  {
+    "key": "temporary-password-length",
+    "en": "temporary-password-length",
+    "fa": "temporary-password-length",
+    "values": [
+      "6",
+      "8",
+      "10"
+    ]
+  },
+  {
+    "key": "custom-rendezvous-server",
+    "en": "ID server",
+    "fa": "سرور شناسه",
+    "values": null
+  },
+  {
+    "key": "relay-server",
+    "en": "Relay server",
+    "fa": "سرور رله",
+    "values": null
+  },
+  {
+    "key": "key",
+    "en": "Server public key",
+    "fa": "کلید عمومی سرور",
+    "values": null
+  },
+  {
+    "key": "whitelist",
+    "en": "IP allowlist",
+    "fa": "فهرست IPهای مجاز",
+    "values": null
+  },
+  {
+    "key": "id-whitelist",
+    "en": "ID allowlist",
+    "fa": "فهرست شناسه‌های مجاز",
+    "values": null
+  },
+  {
+    "key": "auto-disconnect-timeout",
+    "en": "Idle timeout (minutes)",
+    "fa": "زمان بیکاری (دقیقه)",
+    "values": null
+  },
+  {
+    "key": "direct-access-port",
+    "en": "Direct access port",
+    "fa": "پورت دسترسی مستقیم",
+    "values": null
+  }
+]

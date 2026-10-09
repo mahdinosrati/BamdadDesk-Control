@@ -1,0 +1,12 @@
+.env
+data/
+backups/
+certificates/
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+*.pem
+*.key
+*.db
+*.sqlite*

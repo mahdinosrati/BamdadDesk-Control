@@ -1,0 +1,4 @@
+services:
+  api:
+    ports:
+      - "127.0.0.1:${BAMDAD_PROXY_PORT:-18080}:8000"

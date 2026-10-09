@@ -1,0 +1,29 @@
+name: CI
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - run: pip install -r requirements.lock
+      - run: python -m pytest -q
+      - run: bash -n install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh
+      - run: bash tests/test_installer.sh
+      - run: shellcheck -S warning install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh
+  docker:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tests/docker-smoke.sh

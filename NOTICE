@@ -1,0 +1,14 @@
+BamdadDesk Control
+Independent management panel published by mahdinosrati.
+
+Initial panel source extracted from the BamdadDesk management component,
+parent repository commit a183325 (2026). Distributed under GNU AGPL version 3.
+
+BamdadDesk's compatible Windows client is derived from RustDesk. RustDesk is
+an upstream project and trademark; this panel is not an official RustDesk
+product and does not contain RustDesk Server Pro.
+
+Vazirmatn font files are bundled under the SIL Open Font License.
+See static/fonts/OFL.txt for the complete font copyright and license notice.
+
+Python packages and container images have their own upstream licenses.

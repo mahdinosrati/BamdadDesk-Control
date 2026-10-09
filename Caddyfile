@@ -1,0 +1,17 @@
+{
+    email {$BAMDAD_TLS_EMAIL}
+    auto_https disable_redirects
+}
+{$BAMDAD_DOMAIN} {
+    tls {
+        issuer acme {
+            disable_tlsalpn_challenge
+        }
+    }
+    encode zstd gzip
+    request_body {
+        max_size 200MB
+    }
+    header Strict-Transport-Security "max-age=31536000"
+    reverse_proxy api:8000
+}

@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="dark"><title>BamdadDesk Control</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<div class="ambient" aria-hidden="true"></div>
+<header><a class="brand" href="/"><img class="brand-symbol" src="/symbol.png" alt=""><span>Bamdad<span class="cyan">Desk</span><small data-i18n="control">CONTROL CENTER</small></span></a><div class="header-actions"><button id="language" class="quiet" lang="fa">فارسی</button><span id="identity"></span><button id="logout" class="quiet" hidden data-i18n="logout">Sign out</button></div></header>
+<div id="notice" role="status" hidden></div>
+<main id="login-screen"><section class="login-copy"><span class="eyebrow" data-i18n="workspace">YOUR ORGANIZATION. CONNECTED.</span><h1 data-i18n="welcome">A clearer view of your workspace.</h1><p data-i18n="intro">Manage devices, access policies and client releases from one place.</p><div class="orbit" aria-hidden="true"><span>◇</span><i></i><i></i><i></i></div></section><form id="login-form" class="glass login-card"><span class="eyebrow" data-i18n="secure">ADMINISTRATOR ACCESS</span><h2 data-i18n="signin">Sign in</h2><p class="muted" data-i18n="signinHint">Use your organization administrator account.</p><label><span data-i18n="username">Username</span><input name="username" required autocomplete="username" maxlength="80"></label><label><span data-i18n="password">Password</span><input name="password" type="password" required autocomplete="current-password" maxlength="256"></label><button type="submit" data-i18n="signin">Sign in</button><p class="muted footnote">BamdadDesk.ir</p></form></main>
+<div id="workspace" hidden><aside><span class="nav-caption" data-i18n="workspaceNav">WORKSPACE</span><nav id="navigation"></nav><div class="sidebar-note"><span class="status-dot"></span><span data-i18n="managed">Managed access</span><p data-i18n="sidebarHint">Policies are confirmed by each device after they are applied.</p></div></aside><main id="content" tabindex="-1"></main></div>
+<dialog id="dialog"><form method="dialog"><button class="close quiet" aria-label="Close">×</button></form><div id="dialog-body"></div></dialog>
+<footer><span>BamdadDesk</span><span data-i18n="footer">Your workspace, within reach.</span></footer>
+</body></html>
