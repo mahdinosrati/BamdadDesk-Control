@@ -85,6 +85,7 @@ mv -- "$staging/source" "$DEPLOY"
 cd "$DEPLOY"
 install -d -m 0700 -o 10001 -g 10001 "$DATA"
 # Print the configured URL on success or failure, including interrupted bootstrap.
+result=0
 trap 'result=$?; bash "$DEPLOY/scripts/show-url.sh"; rm -rf -- "$staging"; if [[ -n ${download:-} ]]; then rm -rf -- "$download"; fi; exit "$result"' EXIT
 printf '\nBuilding panel and creating the first administrator...\n'
 bash manage.sh resume

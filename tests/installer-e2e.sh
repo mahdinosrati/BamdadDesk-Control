@@ -25,7 +25,7 @@ if [[ ${TEST_HTTP:-0} == 1 ]]; then origin=http://127.0.0.1:18080; fi
 curl -fsS "$origin/healthz"
 sudo bash /opt/bamdaddesk-control/manage.sh backup /tmp/bamdad-ci-backups
 sudo bash -c 'cd /tmp/bamdad-ci-backups && sha256sum --check ./*.sha256'
-sudo bash -c 'tar -tzf /tmp/bamdad-ci-backups/*.tar.gz' | grep -q '.env'
+sudo bash -c 'tar -tzf /tmp/bamdad-ci-backups/*.tar.gz' | grep -F '.env' >/dev/null
 curl -fsS --retry 5 --retry-all-errors --retry-delay 2 "$origin/healthz"
 [[ "$(docker inspect --format '{{.State.StartedAt}}' existing-proxy)" == "$started" ]]
 echo 'Interactive install, trusted HTTPS, backup/restart and existing-proxy coexistence passed.'

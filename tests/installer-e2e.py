@@ -44,4 +44,4 @@ except Exception:
     child.close(force=True)
     raise
 
-print("Interactive installation completed through verified HTTPS.")
+print("Interactive installation completed through " + origin)
