@@ -4,14 +4,15 @@ Run commands from `/opt/bamdaddesk-control` as root, or use `sudo bash /opt/bamd
 
 ## Inspect and recover
 
-- `manage.sh status`: container status and API health.
+- `manage.sh status`: container status, API health and configured URL.
+- `manage.sh configure`: choose domain/IPv4, HTTP/HTTPS and ports, then rebuild/start while preserving accounts and data.
 - `manage.sh logs`: recent API logs; `manage.sh logs caddy`: certificate/proxy errors in automatic mode.
 - `manage.sh resume`: rebuild, create the first administrator only if absent, then start this stack. It never resets an existing administrator password.
 - `curl -fsS https://YOUR-HOST/healthz`: verify public HTTPS, using the configured port. Do not bypass certificate validation.
 
 Before `.env` is created, a failed installation normally removes its temporary source checkout; rerun the installer. Once `/opt/bamdaddesk-control/.env` exists, use `resume`. If the process was killed between moving source and writing `.env`, preserve the directory and any existing data, then complete `.env` using INSTALL.md. Never delete a populated data directory merely to rerun installation.
 
-If port 80 is occupied, choose reverse proxy mode. If another container already uses the requested HTTPS/backend port, choose another. DNS errors require fixing A/AAAA records. A healthy API with failed public HTTPS usually indicates DNS, certificate issuance, external firewall or proxy routing problems. The first administrator requires a password of at least 12 characters.
+If port 80 is occupied, choose reverse proxy mode. If another container already uses the requested HTTPS/backend port, choose another. DNS errors require fixing A/AAAA records. A healthy API with failed public HTTPS usually indicates DNS, certificate issuance, external firewall or proxy routing problems. The first administrator requires a password of at least 12 characters. A `python -m control.bootstrap` one-off container is the interactive administrator wizard, not the web API; its HTTP healthcheck can show unhealthy while waiting for input. Finish the hidden password prompts in the original terminal. For an abandoned wizard, stop only that confirmed bootstrap container before running `manage.sh resume`; never stop unrelated containers.
 
 ## Backup
 
@@ -51,3 +52,7 @@ Client updates are separate: upload an authorized compatible Windows executable 
 ## Known limits
 
 This is a pilot. Full fresh-host installation across all listed distributions, arm64, real public ACME issuance, a live managed Windows service and organization-scale load require deployment acceptance testing. CI checks API behavior, shell logic, Linux Docker health/coexistence, the interactive wizard through HTTPS using a test CA trusted only on the disposable runner, and backup/restart. Its results are visible in GitHub Actions. Behind the proxy, Uvicorn intentionally does not trust forwarded client IP headers: login rate limits can be shared across users. There is no MFA/SSO, browser remote desktop, automatic backup scheduling or immutable external audit store. Configure organizational access and backup policies accordingly.
+
+## Upgrade from 1.0 to IP/HTTP support
+
+Preserve a backup first. From `/opt/bamdaddesk-control`, run `sudo git fetch origin tag v1.1.0-pilot.1`, then `sudo git checkout --detach v1.1.0-pilot.1`, then `sudo bash manage.sh configure`. Choose mode 3 for IPv4/HTTP. Existing administrators are retained; bootstrap will not replace their passwords. Do not discard the data directory to retry installation.

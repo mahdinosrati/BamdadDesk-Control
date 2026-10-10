@@ -4,15 +4,21 @@ umask 077
 [[ $EUID -eq 0 ]] || { echo 'Run with sudo'; exit 1; }
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")"
 [[ -f .env ]] || { echo 'Missing .env; see docs/OPERATIONS.md'; exit 1; }
+trap 'bash scripts/show-url.sh' EXIT
 case "${1:-status}" in
+    configure)
+        bash scripts/configure.sh
+        bash manage.sh resume
+        ;;
     resume)
         if docker buildx version >/dev/null 2>&1; then
             docker build --tag bamdaddesk-control:local .
         else
             DOCKER_BUILDKIT=0 docker build --tag bamdaddesk-control:local .
         fi
-        docker compose run --rm --no-deps api python -m control.bootstrap </dev/tty
-        docker compose up -d --no-build --wait --wait-timeout 120
+        printf '\nCreate the panel administrator below. Password input is hidden.\n'
+        docker compose run --rm --no-deps --interactive --tty api python -m control.bootstrap </dev/tty >/dev/tty 2>/dev/tty
+        docker compose up -d --no-build --remove-orphans --wait --wait-timeout 120
         ;;
     status) docker compose ps ;;
     logs) docker compose logs --tail 100 "${2:-api}" ;;
@@ -31,5 +37,5 @@ case "${1:-status}" in
         printf 'Backup: %s\nSource commit: ' "$archive"
         git rev-parse HEAD | tee "$archive.commit"
         ;;
-    *) echo 'Usage: manage.sh {resume|status|logs [api|caddy]|backup /absolute/directory}'; exit 1 ;;
+    *) echo 'Usage: manage.sh {configure|resume|status|logs [api|caddy]|backup /absolute/directory}'; exit 1 ;;
 esac

@@ -4,17 +4,36 @@
 
 این انتشار آزمایشی است. پنل برای **کلاینت مدیریتی سازگار BamdadDesk** ساخته شده؛ RustDesk معمولی خودکار به آن متصل نمی‌شود. فایل اجرایی اختصاصی سازمان، تنظیمات خصوصی و رمز پیش‌فرض مشترک در این مخزن وجود ندارد.
 
+## تصاویر پنل
+
+تصاویر با داده‌های نمایشی تهیه شده‌اند.
+
+![داشبورد فارسی](docs/screenshots/dashboard-fa-demo.png)
+![داشبورد انگلیسی](docs/screenshots/dashboard-en-demo.png)
+
 ## نصب با یک دستور
 
 سیستم‌های پشتیبانی‌شدهٔ نصب‌کننده: **Ubuntu 22.04/24.04 و Debian 12/13** با systemd، دسترسی root یا sudo و اینترنت. برای شروع ۲ هسته و ۲ گیگابایت RAM در نظر بگیرید؛ فضای دیسک به تعداد نسخه‌های کلاینت بستگی دارد و ظرفیت واقعی باید متناسب با بار شما آزموده شود.
 
 ```bash
-sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.0.0-pilot.1/install.sh -o "$installer"; bash "$installer"'
+sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.1.0-pilot.1/install.sh -o "$installer"; bash "$installer"'
 ```
 
 اگر با root وارد شده‌اید، `sudo` ابتدای دستور را حذف کنید. دستور حتی curl را در صورت نیاز نصب می‌کند. رمز مدیر و رمز ریموت داخل ترمینال و بدون نمایش دریافت می‌شوند؛ هیچ رمز ثابتی برای همهٔ نصب‌ها تعیین نشده است.
 
 نصب‌کننده دامنه، روش HTTPS، پورت، اطلاعات مدیر و تنظیمات اختیاری ID server، relay و کلید عمومی hbbs را می‌پرسد. پیش‌نیازها، Docker و Compose در صورت نیاز نصب می‌شوند. اگر Docker قبلاً نصب است، همان موتور استفاده می‌شود؛ بسته‌های متعارض خودکار حذف نمی‌شوند.
+
+### اجرا با IP، بدون دامنه و SSL
+
+گزینهٔ **۳ — HTTP** را انتخاب کنید، IPv4 سرور و پورت آزاد (پیش‌فرض 8080) را وارد کنید. لینک مانند `http://YOUR-IP:8080` خواهد بود؛ DNS و گواهی لازم نیست. پورت انتخاب‌شده باید در فایروال سرور/دیتاسنتر باز باشد. HTTP رمز و اطلاعات را بدون رمزنگاری منتقل می‌کند و برای تست در نظر گرفته شده است؛ کلاینت مدیریتی ویندوز همچنان به HTTPS نیاز دارد.
+
+هنگام ساخت مدیر، رمز در ترمینال نمایش داده نمی‌شود؛ آن را تایپ کنید و Enter بزنید. تا تکمیل این مرحله سرویس وب اجرا نمی‌شود. اکنون لینک قبل از شروع و در پایان، حتی هنگام خطا، چاپ می‌شود؛ دیدن لینک به‌تنهایی به معنی سلامت سرویس نیست.
+
+برای تغییر IP، دامنه، پورت یا حالت HTTPS بعد از ارتقای سورس، دستور زیر را اجرا کنید. داده‌ها و مدیر موجود حفظ می‌شوند:
+
+```bash
+sudo bash /opt/bamdaddesk-control/manage.sh configure
+```
 
 ### نصب روی سرور فعلی RustDesk
 

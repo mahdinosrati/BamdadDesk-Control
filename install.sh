@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 readonly REPOSITORY=https://github.com/mahdinosrati/BamdadDesk-Control.git
-readonly RELEASE=v1.0.0-pilot.1
+readonly RELEASE=v1.1.0-pilot.1
 readonly DEPLOY=/opt/bamdaddesk-control
 readonly DATA=/var/lib/bamdaddesk-control
 
@@ -25,7 +25,8 @@ command -v flock >/dev/null || die 'Install util-linux (flock) first.'
 exec 9>/run/lock/bamdaddesk-control-install.lock
 flock -n 9 || die 'Another BamdadDesk installer is running.'
 if [[ -e "$DEPLOY" ]]; then
-    die "Deployment already exists. For a configured deployment run: sudo bash $DEPLOY/manage.sh resume. See docs/OPERATIONS.md for incomplete setup recovery."
+    if [[ -f "$DEPLOY/scripts/show-url.sh" ]]; then bash "$DEPLOY/scripts/show-url.sh"; elif [[ -f "$DEPLOY/.env" ]]; then grep "^BAMDAD_ORIGIN=" "$DEPLOY/.env"; fi
+    die "Deployment already exists. Upgrade to $RELEASE then run sudo bash $DEPLOY/manage.sh configure; see docs/OPERATIONS.md. For a configured deployment run: sudo bash $DEPLOY/manage.sh resume. See docs/OPERATIONS.md for incomplete setup recovery."
 fi
 [[ ! -e "$DATA" ]] || die "$DATA already exists; refusing to overwrite existing data."
 
@@ -79,69 +80,19 @@ staging=$(mktemp -d)
 trap 'rm -rf -- "$staging"; if [[ -n ${download:-} ]]; then rm -rf -- "$download"; fi' EXIT
 git clone --branch "$RELEASE" --depth 1 "$REPOSITORY" "$staging/source"
 cd "$staging/source"
-source scripts/install-lib.sh
-mode='' domain='' https_port='' proxy_port='' email='' ready=''
-printf '\n1) Automatic HTTPS (public DNS domain, free TCP 80 and chosen HTTPS port)\n2) Existing reverse proxy on this host (loopback backend; configure your proxy separately)\n'
-while :; do
-    ask mode 'Mode' 1
-    [[ "$mode" == 1 || "$mode" == 2 ]] && break
-done
-while :; do
-    ask domain 'Panel DNS hostname (no scheme, port or path)'
-    valid_domain "$domain" && break
-    printf 'Enter a valid DNS hostname, e.g. desk.example.com.\n'
-done
-if [[ "$mode" == 1 ]]; then
-    port_available 80 || fail 'TCP 80 is occupied. Run the installer again and choose existing reverse proxy mode.'
-    getent ahosts "$domain" >/dev/null || fail 'Domain does not resolve. Set DNS first, then run the installer again.'
-    while :; do
-        ask_port https_port 'Public HTTPS port (not 80)' 443
-        [[ "$https_port" != 80 ]] && break
-    done
-    while :; do
-        ask email 'Email for TLS certificate notices'
-        [[ "$email" =~ ^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]] && break
-    done
-    printf 'DNS A/AAAA must point here. Allow inbound TCP 80 and %s in your provider firewall/router.\n' "$https_port"
-    ask ready 'DNS and external firewall ready? (yes/no)' no
-    [[ "$ready" == yes ]] || fail 'Prepare DNS/firewall, then run the installer again.'
-    files=compose.yaml:compose.https.yaml
-else
-    while :; do
-        ask https_port 'HTTPS port on your existing reverse proxy' 443
-        valid_port "$https_port" && break
-    done
-    while :; do
-        ask_port proxy_port 'Local backend port for your reverse proxy' 18080
-        [[ "$proxy_port" != "$https_port" ]] && break
-        printf 'The backend port must differ from the public HTTPS port.\n'
-    done
-    files=compose.yaml:compose.proxy.yaml
-fi
-origin="https://$domain"
-[[ "$https_port" == 443 ]] || origin+=":$https_port"
+bash scripts/configure.sh
 mv -- "$staging/source" "$DEPLOY"
 cd "$DEPLOY"
 install -d -m 0700 -o 10001 -g 10001 "$DATA"
-cat > .env <<EOF
-COMPOSE_FILE=$files
-BAMDAD_ORIGIN=$origin
-BAMDAD_DOMAIN=$domain
-BAMDAD_DATA_DIR=$DATA
-BAMDAD_HTTPS_PORT=$https_port
-BAMDAD_PROXY_PORT=${proxy_port:-18080}
-BAMDAD_TLS_EMAIL=${email:-}
-EOF
-chmod 0600 .env
+# Print the configured URL on success or failure, including interrupted bootstrap.
+trap 'result=$?; bash "$DEPLOY/scripts/show-url.sh"; rm -rf -- "$staging"; if [[ -n ${download:-} ]]; then rm -rf -- "$download"; fi; exit "$result"' EXIT
 printf '\nBuilding panel and creating the first administrator...\n'
 bash manage.sh resume
-if [[ "$mode" == 2 ]]; then
-    printf '\nProxy HTTPS %s to http://127.0.0.1:%s (see docs/INSTALL.md).\n' "$origin" "$proxy_port"
-fi
-printf '\nChecking public HTTPS endpoint...\n'
-if health=$(curl --proto '=https' --tlsv1.2 -fsS --retry 8 --retry-all-errors --retry-delay 5 --max-time 10 "$origin/healthz") && [[ "$health" == '{"status":"ok"}' ]]; then
+origin=$(sed -n 's/^BAMDAD_ORIGIN=//p' .env)
+printf '\nChecking configured endpoint: %s\n' "$origin"
+if health=$(curl --proto '=http,https' -fsS --retry 3 --retry-all-errors --retry-delay 3 --connect-timeout 5 --max-time 10 "$origin/healthz") && [[ "$health" == '{"status":"ok"}' ]]; then
     printf '\nPanel is reachable: %s\n' "$origin"
 else
-    printf '\nContainers are running, but public HTTPS is not verified. Check DNS, certificates, firewall/proxy and run: sudo bash %s/manage.sh status\n' "$DEPLOY" >&2
+    printf '\nAPI started, but the public URL is not verified. Check firewall, DNS or proxy routing.\n' >&2
     exit 1
 fi

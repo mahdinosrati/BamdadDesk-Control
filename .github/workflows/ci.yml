@@ -18,9 +18,9 @@ jobs:
           cache-dependency-path: requirements.lock
       - run: pip install -r requirements.lock
       - run: python -m pytest -q
-      - run: bash -n install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh
+      - run: bash -n install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh scripts/configure.sh scripts/show-url.sh
       - run: bash tests/test_installer.sh
-      - run: shellcheck -S warning install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh
+      - run: shellcheck -S warning install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh scripts/configure.sh scripts/show-url.sh
   docker:
     runs-on: ubuntu-24.04
     timeout-minutes: 20
@@ -28,6 +28,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: bash tests/docker-smoke.sh
   installer:
+    strategy:
+      matrix:
+        http: ['0', '1']
+    env:
+      TEST_HTTP: ${{ matrix.http }}
     runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:

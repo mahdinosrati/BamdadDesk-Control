@@ -1,0 +1,6 @@
+services:
+  api:
+    environment:
+      BAMDAD_ALLOW_HTTP: '1'
+    ports:
+      - "${BAMDAD_HTTP_PORT:-8080}:8000"

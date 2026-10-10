@@ -2,6 +2,10 @@
 set -Eeuo pipefail
 cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.."
 source scripts/install-lib.sh
+for address in 127.0.0.1 192.0.2.10 255.255.255.255; do valid_ipv4 "$address"; done
+for address in 256.1.1.1 01.2.3.4 1.2.3 '1.2.3.4;id'; do
+    if valid_ipv4 "$address"; then echo 'Invalid IPv4 accepted'; exit 1; fi
+done
 for port in 1 443 8443 65535; do valid_port "$port"; done
 for port in 0 65536 080 abc '443;id' -1; do
     if valid_port "$port"; then echo "Invalid port accepted: $port"; exit 1; fi

@@ -1,6 +1,6 @@
 # Security
 
-This is a pilot release. Use HTTPS with a certificate trusted by managed clients. Do not expose the internal API directly or enable development HTTP outside loopback. Choose unique administrator and remote access passwords.
+This is a pilot release. Use HTTPS with a certificate trusted by managed clients. For isolated testing, the explicit HTTP deployment mode publishes the API and disables Secure cookies; passwords and management traffic are then unencrypted. Managed Windows clients still require HTTPS. Do not enable development HTTP outside loopback. Choose unique administrator and remote access passwords.
 
 Do not post credentials, enrollment tokens, private keys, database files, `.env`, backups, private client builds or real device logs in public issues. To report a vulnerability, use GitHub's **Security → Report a vulnerability** if available; otherwise contact the repository owner privately through an established channel before disclosing exploit details. Ordinary non-sensitive bugs may use Issues.
 

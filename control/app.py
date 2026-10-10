@@ -89,7 +89,9 @@ def create_app(directory=None, secure=None):
     app.add_middleware(BodyLimit)
     store = Store(directory or os.environ.get("BAMDAD_DATA", "./data"))
     app.state.store = store
-    secure = secure if secure is not None else os.environ.get("BAMDAD_DEV_HTTP") != "1"
+    secure = secure if secure is not None else not (
+        os.environ.get("BAMDAD_DEV_HTTP") == "1" or os.environ.get("BAMDAD_ALLOW_HTTP") == "1"
+    )
     static = Path(__file__).parent.parent / "static"
 
     @app.middleware("http")

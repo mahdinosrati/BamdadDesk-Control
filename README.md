@@ -8,19 +8,26 @@ Self-hosted management for **compatible BamdadDesk Windows clients**, with an En
 
 [فارسی](README.fa.md) · [Installation](docs/INSTALL.md) · [Operations and recovery](docs/OPERATIONS.md) · [Architecture](docs/ARCHITECTURE.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
 
+## Screenshots
+
+Demo data only; no real device details or credentials.
+
+![English dashboard](docs/screenshots/dashboard-en-demo.png)
+![Persian dashboard](docs/screenshots/dashboard-fa-demo.png)
+
 ## One-command installation
 
-Run on **Ubuntu 22.04/24.04 or Debian 12/13**, with systemd, root/sudo, internet access, a DNS hostname and a compatible Docker host (amd64/arm64). Start with 2 CPU cores, 2 GB RAM and enough disk for uploaded client releases; this is a starting configuration, not a measured capacity guarantee.
+Run on **Ubuntu 22.04/24.04 or Debian 12/13**, with systemd, root/sudo, internet access, a DNS hostname or IPv4 address and a compatible Docker host (amd64/arm64). Start with 2 CPU cores, 2 GB RAM and enough disk for uploaded client releases; this is a starting configuration, not a measured capacity guarantee.
 
 ```bash
-sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.0.0-pilot.1/install.sh -o "$installer"; bash "$installer"'
+sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.1.0-pilot.1/install.sh -o "$installer"; bash "$installer"'
 ```
 
-In a root shell, omit `sudo`. The command installs the download prerequisite too, uses a unique temporary file, and stops if downloading fails. To inspect code before executing it, download [install.sh](https://github.com/mahdinosrati/BamdadDesk-Control/blob/v1.0.0-pilot.1/install.sh) and run `sudo bash install.sh`.
+In a root shell, omit `sudo`. The command installs the download prerequisite too, uses a unique temporary file, and stops if downloading fails. To inspect code before executing it, download [install.sh](https://github.com/mahdinosrati/BamdadDesk-Control/blob/v1.1.0-pilot.1/install.sh) and run `sudo bash install.sh`.
 
 The wizard asks for:
 
-1. Automatic HTTPS or an existing host reverse proxy.
+1. Automatic HTTPS, an existing HTTPS reverse proxy, or HTTP with a hostname/IPv4 address.
 2. Panel hostname, HTTPS port, and certificate email (automatic mode).
 3. A free local backend port (existing-proxy mode).
 4. Initial administrator username and password, entered privately.
@@ -29,6 +36,14 @@ The wizard asks for:
 It installs prerequisites and Docker if absent, adds Compose if missing, builds the panel and initializes persistent storage. Existing Docker engines are reused. Conflicting Docker packages or broken installations cause an explicit error rather than package removal. No existing RustDesk container, service or firewall rule is changed.
 
 Automatic HTTPS requires public DNS pointing to the server, free/reachable TCP **80** for certificate validation and the selected HTTPS port (default **443**). If 80 is occupied, choose existing reverse proxy mode: it publishes the backend on **127.0.0.1** only. You must add a route to your existing proxy; the installer cannot safely guess or modify its configuration. See [examples](docs/INSTALL.md#existing-reverse-proxy).
+
+## IP-only testing without DNS or SSL
+
+Choose **mode 3 (HTTP)**, enter the server IPv4 and an unused port (default 8080). Open `http://YOUR-IP:8080`. No domain or certificate is required. Allow that port in your server/provider firewall. HTTP exposes login and management traffic in plaintext; use it for isolated testing, and choose HTTPS before enrolling managed Windows clients. These clients still require HTTPS.
+
+The administrator password prompt is hidden: type it and press Enter. Installation waits for administrator setup before starting the web API. The configured URL is printed before startup and on exit, even if a later check fails; a printed URL alone does not mean the service is healthy. Run `manage.sh status` to see both URL and container state.
+
+To change an existing deployment after upgrading its source, run `sudo bash /opt/bamdaddesk-control/manage.sh configure`. It preserves the database and administrator account, saves the previous `.env`, and replaces this panel’s obsolete mode containers.
 
 ## What it does
 

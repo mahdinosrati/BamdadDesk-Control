@@ -8,6 +8,12 @@ Use the one-command installer in [README](../README.md). It fetches the tagged p
 
 Existing Compose must support `up --wait` (2.20+). Unsupported or broken installations stop with an explanation. Outbound access to GitHub, Docker repositories, Docker Hub, PyPI and certificate authorities is required. Restrictive networks need their own approved mirrors.
 
+## HTTP with IPv4 or hostname
+
+Choose mode 3 and enter a hostname or IPv4 address and a free public port (8080 by default). DNS is unnecessary for IPv4. The API is published directly; no Caddy/certificate is needed. The HTTP Compose overlay explicitly sets `BAMDAD_ALLOW_HTTP=1` so browser login cookies work over HTTP, while CSRF and administrator permissions remain enforced. This is unencrypted testing mode; managed Windows clients still refuse HTTP. IPv6 literal input is not supported by this wizard.
+
+The installer prints the configured URL before bootstrap and on exit, including errors. Administrator password entry is hidden, not frozen. Use `manage.sh status` for service state and URL. After a source upgrade, `manage.sh configure` changes deployment mode/address/port without resetting accounts or data; the previous configuration is saved in a root-only `.env.backup.*` file.
+
 ## Automatic HTTPS
 
 Create DNS A/AAAA records for `desk.example.com`. Remove stale AAAA records if IPv6 cannot reach the server. Inbound TCP 80 and the chosen HTTPS port must reach the host. Choose mode 1 and enter hostname, HTTPS port (443 by default), email and administrator credentials.
