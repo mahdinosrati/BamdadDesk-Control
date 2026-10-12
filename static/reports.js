@@ -8,7 +8,7 @@ Object.assign(messages,{
 });
 renderConnections=async function(){
   await fetchGroups();
-  const group=select([['*',t('all')],...groupOptions()]);
+  const group=select([['*',t('all')],...groupOptions()],'*');
   const device=input('report-device');device.maxLength=40;
   const start=input('start','date'),end=input('end','date'),search=input('search'),kind=select([['',t('all')],...['opened','authorized','closed'].map(k=>[k,t(k)])]);
   search.placeholder=t('reportSearch');search.maxLength=100;

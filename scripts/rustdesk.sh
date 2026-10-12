@@ -7,7 +7,7 @@ source scripts/install-lib.sh
 readonly server_dir=/var/lib/bamdaddesk-rustdesk
 server_compose() { docker compose --env-file "$server_dir/server.env" -f "$PWD/compose.rustdesk.yaml" "$@"; }
 configure_server() {
-    local server_host id_port relay_port
+    local server_host id_port relay_port version
     server_host='' id_port='' relay_port=''
     printf 'Use an external/existing RustDesk server by keeping this optional component uninstalled.\n'
     while :; do ask server_host 'Public RustDesk hostname or IPv4'; valid_host "$server_host" && break; done
@@ -27,8 +27,11 @@ configure_server() {
     fi
     install -d -m 0700 "$server_dir" "$server_dir/data"
     [[ ! -f "$server_dir/server.env" ]] || cp -p "$server_dir/server.env" "$server_dir/server.env.backup.$(date -u +%Y%m%dT%H%M%S%N)"
+    version=1.1.16
+    if [[ -f "$server_dir/server.env" ]]; then version=$(sed -n 's/^RUSTDESK_VERSION=//p' "$server_dir/server.env"); fi
+    [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail 'Invalid stored RustDesk version.'
     cat > "$server_dir/server.env" <<EOF
-RUSTDESK_VERSION=1.1.16
+RUSTDESK_VERSION=$version
 RUSTDESK_HOST=$server_host
 RUSTDESK_ID_PORT=$id_port
 RUSTDESK_NAT_PORT=$((id_port-1))
@@ -49,6 +52,8 @@ case "${1:-status}" in
             stop|restart) server_compose "$1" ;;
             key) cat "$server_dir/data/id_ed25519.pub" ;;
             backup)
+                server_compose ps --status running --services | grep -qx hbbs || fail 'Start the bundled server before backing up.'
+                server_compose ps --status running --services | grep -qx hbbr || fail 'Start the bundled relay before backing up.'
                 install -d -m 0700 /var/backups/bamdaddesk-control
                 archive="/var/backups/bamdaddesk-control/rustdesk-$(date -u +%Y%m%dT%H%M%S%N).tar.gz"
                 server_compose stop
@@ -63,7 +68,10 @@ case "${1:-status}" in
                 bash scripts/rustdesk.sh backup
                 cp -p "$server_dir/server.env" "$server_dir/server.env.before-update"
                 sed -i "s/^RUSTDESK_VERSION=.*/RUSTDESK_VERSION=$version/" "$server_dir/server.env"
-                server_compose pull
+                if ! server_compose pull; then
+                    cp -p "$server_dir/server.env.before-update" "$server_dir/server.env"
+                    fail 'Image download failed; previous version configuration restored.'
+                fi
                 server_compose up -d
                 ;;
         esac
