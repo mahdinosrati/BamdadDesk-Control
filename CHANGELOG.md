@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 (release candidate validation)
+## 1.2.0
 
 - Show form validation/errors inside administrator dialogs and add password visibility controls.
 - Add token inventory, renewal, editing and revocation; legacy usage remains unknown.
@@ -15,7 +15,7 @@
 
 Regression surface: `control/app.py` registers feature routers and extends enrollment bookkeeping; `control/storage.py` adds tables without replacing existing data. `static/app.js`, `index.html` and `style.css` change dialog feedback, password controls and feature navigation. `install.sh` adds optional server setup; `manage.sh` adds explicit operator actions. Docker adds the NSIS compiler. Existing remote desktop transport is unchanged. Native client changes are confined to management/audit URL migration in its separate repository; ordinary unmanaged operation is unchanged.
 
-Validation: 19 local API tests and 5 native Bamdad module tests passed. Local browser verified visible administrator validation and organization controls. NSIS/Linux container checks are pending CI; real Windows installation and public ACME issuance are not yet acceptance-tested. Do not interpret a package-compilation test as a Windows installation test.
+Validation: 19 local API tests and 5 native Bamdad module tests passed. Local browser verified visible administrator validation and organization controls. NSIS compilation, Docker health, RustDesk key persistence and interactive HTTP/HTTPS-proxy installation passed CI; real Windows installation and public ACME issuance are not yet acceptance-tested. Do not interpret a package-compilation test as a Windows installation test.
 
 
 ## 1.1.0-pilot.1

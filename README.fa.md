@@ -94,3 +94,4 @@ sudo bash /opt/bamdaddesk-control/manage.sh resume
 
 سازنده: **مهدی نصرتی** — [ایمیل](mailto:mahdinosrati06@gmail.com) · [تلگرام](https://t.me/MiNosrati).
 
+![گزارش فارسی در تست محلی](docs/screenshots/reports-fa-local.jpg)

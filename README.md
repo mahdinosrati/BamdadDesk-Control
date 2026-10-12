@@ -4,7 +4,7 @@
 
 Self-hosted management for **compatible BamdadDesk Windows clients**, with an English/Persian web panel, RTL layout and locally bundled Vazirmatn fonts.
 
-**Pilot release.** This public repository contains the complete panel source and Docker installer. No GitHub account or private repository token is required to install it. It does not include an organization-specific Windows executable or a RustDesk Pro implementation. Unmodified RustDesk clients cannot enroll in this panel.
+**Version 1.2.0.** This public repository contains the complete panel source and Docker installer. No GitHub account or private repository token is required to install it. It does not include an organization-specific Windows executable or a RustDesk Pro implementation. Unmodified RustDesk clients cannot enroll in this panel.
 
 [فارسی](README.fa.md) · [Installation](docs/INSTALL.md) · [Operations and recovery](docs/OPERATIONS.md) · [Architecture](docs/ARCHITECTURE.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md)
 
@@ -97,4 +97,3 @@ AGPL-3.0: [LICENSE](LICENSE). Font licensing and upstream attribution: [NOTICE](
 Includes visible administrator validation, password visibility controls, token renewal/revocation, group editing/moves, filtered CSV reports, organization enrollment installers, an interactive server menu and optional RustDesk OSS. See the handbook for client compatibility and API migration requirements.
 
 Created by **Mahdi Nosrati / مهدی نصرتی** — [email](mailto:mahdinosrati06@gmail.com) · [Telegram](https://t.me/MiNosrati).
-
