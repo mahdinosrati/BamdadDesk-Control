@@ -3,6 +3,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 BAMDAD_DATA=/data
 WORKDIR /app
 COPY requirements.lock ./requirements.lock
 RUN pip install --no-cache-dir -r requirements.lock && useradd --uid 10001 --create-home bamdad
+RUN apt-get update && apt-get install -y --no-install-recommends nsis && rm -rf /var/lib/apt/lists/*
 COPY --chown=bamdad:bamdad control ./control
 COPY --chown=bamdad:bamdad static ./static
 USER 10001:10001

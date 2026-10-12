@@ -20,10 +20,10 @@ Demo data only; no real device details or credentials.
 Run on **Ubuntu 22.04/24.04 or Debian 12/13**, with systemd, root/sudo, internet access, a DNS hostname or IPv4 address and a compatible Docker host (amd64/arm64). Start with 2 CPU cores, 2 GB RAM and enough disk for uploaded client releases; this is a starting configuration, not a measured capacity guarantee.
 
 ```bash
-sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.1.0-pilot.1/install.sh -o "$installer"; bash "$installer"'
+sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.2.0/install.sh -o "$installer"; bash "$installer"'
 ```
 
-In a root shell, omit `sudo`. The command installs the download prerequisite too, uses a unique temporary file, and stops if downloading fails. To inspect code before executing it, download [install.sh](https://github.com/mahdinosrati/BamdadDesk-Control/blob/v1.1.0-pilot.1/install.sh) and run `sudo bash install.sh`.
+In a root shell, omit `sudo`. The command installs the download prerequisite too, uses a unique temporary file, and stops if downloading fails. To inspect code before executing it, download [install.sh](https://github.com/mahdinosrati/BamdadDesk-Control/blob/v1.2.0/install.sh) and run `sudo bash install.sh`.
 
 The wizard asks for:
 
@@ -89,3 +89,12 @@ HTTP development mode is loopback-only and cannot be used by managed clients. Re
 ## License and attribution
 
 AGPL-3.0: [LICENSE](LICENSE). Font licensing and upstream attribution: [NOTICE](NOTICE). This is an independent project, not an official RustDesk product. There is no RustDesk Pro license requirement for this panel; it also does not supply Pro features or Pro protocol compatibility.
+
+## Organization management in 1.2
+
+[Complete operator handbook](docs/HANDBOOK.md) · [راهنمای کامل فارسی](docs/HANDBOOK.fa.md)
+
+Includes visible administrator validation, password visibility controls, token renewal/revocation, group editing/moves, filtered CSV reports, organization enrollment installers, an interactive server menu and optional RustDesk OSS. See the handbook for client compatibility and API migration requirements.
+
+Created by **Mahdi Nosrati / مهدی نصرتی** — [email](mailto:mahdinosrati06@gmail.com) · [Telegram](https://t.me/MiNosrati).
+

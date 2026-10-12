@@ -82,6 +82,16 @@ class Store:
             ''')
             if 'group_id' not in {r[1] for r in db.execute('PRAGMA table_info(audit)')}:
                 db.execute("ALTER TABLE audit ADD COLUMN group_id TEXT NOT NULL DEFAULT ''")
+            db.executescript('''
+                CREATE TABLE IF NOT EXISTS enrollment_details (
+                    token TEXT PRIMARY KEY, id TEXT UNIQUE NOT NULL,
+                    created INTEGER NOT NULL DEFAULT 0, used INTEGER,
+                    revoked INTEGER NOT NULL DEFAULT 0);
+                INSERT OR IGNORE INTO enrollment_details(token,id)
+                    SELECT token,lower(hex(randomblob(16))) FROM enrollments;
+                CREATE TABLE IF NOT EXISTS organization_settings (key TEXT PRIMARY KEY,value TEXT NOT NULL);
+                CREATE TABLE IF NOT EXISTS automatic_enrollments (token TEXT PRIMARY KEY);
+            ''')
 
     @contextmanager
     def connect(self):

@@ -18,6 +18,10 @@ jobs:
           cache-dependency-path: requirements.lock
       - run: pip install -r requirements.lock
       - run: python -m pytest -q
+      - run: sudo apt-get update && sudo apt-get install -y nsis
+      - run: python -m pytest -q tests/test_installer_package.py
+      - run: bash -n scripts/menu.sh scripts/rustdesk.sh
+      - run: shellcheck -S warning scripts/menu.sh scripts/rustdesk.sh
       - run: bash -n install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh scripts/configure.sh scripts/show-url.sh
       - run: bash tests/test_installer.sh
       - run: shellcheck -S warning install.sh manage.sh scripts/install-lib.sh tests/test_installer.sh tests/docker-smoke.sh tests/installer-e2e.sh scripts/configure.sh scripts/show-url.sh
@@ -27,6 +31,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: bash tests/docker-smoke.sh
+      - run: bash tests/rustdesk-smoke.sh
   installer:
     strategy:
       matrix:

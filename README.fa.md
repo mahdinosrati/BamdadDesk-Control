@@ -16,7 +16,7 @@
 سیستم‌های پشتیبانی‌شدهٔ نصب‌کننده: **Ubuntu 22.04/24.04 و Debian 12/13** با systemd، دسترسی root یا sudo و اینترنت. برای شروع ۲ هسته و ۲ گیگابایت RAM در نظر بگیرید؛ فضای دیسک به تعداد نسخه‌های کلاینت بستگی دارد و ظرفیت واقعی باید متناسب با بار شما آزموده شود.
 
 ```bash
-sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.1.0-pilot.1/install.sh -o "$installer"; bash "$installer"'
+sudo bash -c 'set -e; if ! command -v curl >/dev/null; then apt-get update; apt-get install -y curl ca-certificates; fi; installer=$(mktemp); trap '\''rm -f "$installer"'\'' EXIT; curl --proto "=https" --tlsv1.2 -fsSL https://raw.githubusercontent.com/mahdinosrati/BamdadDesk-Control/v1.2.0/install.sh -o "$installer"; bash "$installer"'
 ```
 
 اگر با root وارد شده‌اید، `sudo` ابتدای دستور را حذف کنید. دستور حتی curl را در صورت نیاز نصب می‌کند. رمز مدیر و رمز ریموت داخل ترمینال و بدون نمایش دریافت می‌شوند؛ هیچ رمز ثابتی برای همهٔ نصب‌ها تعیین نشده است.
@@ -85,3 +85,12 @@ sudo bash /opt/bamdaddesk-control/manage.sh resume
 | `tests/` و `.github/workflows/ci.yml` | آزمون API، نصب‌کننده و Docker |
 
 برای توسعه از Python 3.12 و دستورهای [README انگلیسی](README.md#development) استفاده کنید. معماری و مرزهای اعتماد در [ARCHITECTURE](docs/ARCHITECTURE.md)، تفاوت انتشار عمومی با پروژهٔ اصلی در [CHANGELOG](CHANGELOG.md) و مجوز AGPL در [LICENSE](LICENSE) ثبت شده‌اند.
+
+## راهنمای نسخهٔ ۱٫۲
+
+[راهنمای کامل فارسی از نصب تا نگهداری](docs/HANDBOOK.fa.md) · [English handbook](docs/HANDBOOK.md)
+
+ثبت خودکار با نصاب سازمانی، مدیریت و تمدید توکن، ویرایش گروه، خروجی CSV با فیلتر، پیام روشن فرم مدیر، منوی لینوکس، نصب اختیاری RustDesk و SSL خودکار اضافه شده‌اند. جزئیات سازگاری کلاینت و مهاجرت آدرس API در راهنما آمده است.
+
+سازنده: **مهدی نصرتی** — [ایمیل](mailto:mahdinosrati06@gmail.com) · [تلگرام](https://t.me/MiNosrati).
+

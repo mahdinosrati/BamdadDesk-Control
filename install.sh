@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 
 readonly REPOSITORY=https://github.com/mahdinosrati/BamdadDesk-Control.git
-readonly RELEASE=v1.1.0-pilot.1
+readonly RELEASE=v1.2.0
 readonly DEPLOY=/opt/bamdaddesk-control
 readonly DATA=/var/lib/bamdaddesk-control
 
@@ -31,6 +31,7 @@ fi
 [[ ! -e "$DATA" ]] || die "$DATA already exists; refusing to overwrite existing data."
 
 printf 'Installing BamdadDesk Control %s. Existing RustDesk services will remain running.\n' "$RELEASE"
+printf 'Created by Mahdi Nosrati / مهدی نصرتی — mahdinosrati06@gmail.com — https://t.me/MiNosrati\n'
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y ca-certificates curl git iproute2 dnsutils
 if ! command -v docker >/dev/null; then
@@ -97,3 +98,11 @@ else
     printf '\nAPI started, but the public URL is not verified. Check firewall, DNS or proxy routing.\n' >&2
     exit 1
 fi
+printf '\nOptional: install a new RustDesk OSS server alongside the panel. Choose no if you already have one.\n'
+read -r -p 'Install bundled RustDesk server? (yes/no) [no]: ' bundled </dev/tty
+if [[ "$bundled" == yes ]]; then bash scripts/rustdesk.sh install; fi
+if [[ ! -e /usr/local/bin/bamdad ]]; then
+    printf '#!/usr/bin/env bash\nexec bash /opt/bamdaddesk-control/manage.sh "$@"\n' > /usr/local/bin/bamdad
+    chmod 0755 /usr/local/bin/bamdad
+fi
+printf '\nManagement menu: sudo bash %s/manage.sh\n' "$DEPLOY"

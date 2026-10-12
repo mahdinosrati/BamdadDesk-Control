@@ -55,4 +55,4 @@ This is a pilot. Full fresh-host installation across all listed distributions, a
 
 ## Upgrade from 1.0 to IP/HTTP support
 
-Preserve a backup first. From `/opt/bamdaddesk-control`, run `sudo git fetch origin tag v1.1.0-pilot.1`, then `sudo git checkout --detach v1.1.0-pilot.1`, then `sudo bash manage.sh configure`. Choose mode 3 for IPv4/HTTP. Existing administrators are retained; bootstrap will not replace their passwords. Do not discard the data directory to retry installation.
+Preserve a backup first. From `/opt/bamdaddesk-control`, run `sudo git fetch origin tag v1.2.0`, then `sudo git checkout --detach v1.2.0`, then `sudo bash manage.sh configure`. Choose mode 3 for IPv4/HTTP. Existing administrators are retained; bootstrap will not replace their passwords. Do not discard the data directory to retry installation.

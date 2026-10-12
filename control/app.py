@@ -19,6 +19,9 @@ from .body_limit import BodyLimit
 from .storage import PASSWORDS, Store, canonical, digest
 from .scopes import device_in_scope, group_allowed, policy_in_scope, require_global, require_group, set_scope
 from .reporting import router as reporting_router
+from .administration import router as administration_router
+from .reports import router as reports_router
+from .organization import router as organization_router, settings as organization_settings
 
 
 class Model(BaseModel):
@@ -287,6 +290,7 @@ def create_app(directory=None, secure=None):
             group_exists(db, body.group_id)
             require_group(admin, body.group_id)
             db.execute("INSERT INTO enrollments VALUES (?,?,?,?,?)", (digest(token), body.label, body.group_id, expires, body.uses))
+            db.execute('INSERT INTO enrollment_details(token,id,created,used) VALUES (?,?,?,0)', (digest(token), str(uuid.uuid4()), int(time.time())))
             store.audit(db, admin["username"], "enrollment.create", body.label, body.group_id)
         return {"token": token, "expires": expires, "public_key": store.public_key()}
 
@@ -298,7 +302,10 @@ def create_app(directory=None, secure=None):
             row = db.execute("SELECT * FROM enrollments WHERE token=? AND expires>? AND remaining>0", (digest(body.token), now)).fetchone()
             if not row:
                 raise HTTPException(401, "Enrollment expired or invalid")
+            if db.execute('SELECT 1 FROM automatic_enrollments WHERE token=?', (digest(body.token),)).fetchone() and not organization_settings(db)['automatic_enrollment']:
+                raise HTTPException(403, 'Automatic enrollment is currently disabled')
             db.execute("UPDATE enrollments SET remaining=remaining-1 WHERE token=?", (digest(body.token),))
+            db.execute('UPDATE enrollment_details SET used=used+1 WHERE token=?', (digest(body.token),))
             db.execute("INSERT INTO devices(id,token,name,group_id,version,rustdesk_id) VALUES (?,?,?,?,?,?)",
                        (identifier, digest(token), body.name, row["group_id"], body.version, body.rustdesk_id))
             store.audit(db, "device", "device.enroll", identifier, row['group_id'])
@@ -479,5 +486,8 @@ def create_app(directory=None, secure=None):
         return FileResponse(store.directory / "releases" / (row["id"] + ".exe"), filename="BamdadDesk-" + row["version"] + ".exe", media_type="application/octet-stream")
 
     app.include_router(reporting_router(store, require, device_auth, effective_policy))
+    app.include_router(administration_router(store, require, group_exists))
+    app.include_router(reports_router(store, require))
+    app.include_router(organization_router(store, require, device_auth, group_exists))
     app.mount("/", StaticFiles(directory=static, html=True), name="ui")
     return app

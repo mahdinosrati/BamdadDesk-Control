@@ -45,7 +45,7 @@ function el(tag, attrs = {}, ...children) {
   return node;
 }
 function button(text, action, quiet = false) {return el('button', {type:'button', class:quiet?'quiet':'', onclick:action}, t(text));}
-function notice(message, error = false) {const n=$('#notice'); n.textContent=message;n.className=error?'error':'';n.hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>n.hidden=true,7000);}
+function notice(message, error = false) {const n=$('#dialog').open ? $('#dialog-notice') : $('#notice'); n.textContent=message;n.className=error?'notice-inline error':'notice-inline';n.hidden=false;clearTimeout(notice.timer);notice.timer=setTimeout(()=>n.hidden=true,7000);}
 async function api(path, options = {}) {
   const response = await fetch('/api'+path,{...options,headers:{...(options.body instanceof FormData?{}:{'Content-Type':'application/json'}),'X-CSRF-Token':csrf,...options.headers}});
   if (!response.ok) {
@@ -65,7 +65,7 @@ function select(options, value='') {const node=el('select');for(const [v,label] 
 function heading(title, hint, action) {return el('div',{class:'page-heading'},el('div',{},el('span',{class:'eyebrow'},'BAMDADDESK / CONTROL'),el('h1',{},t(title)),el('p',{},t(hint))),action);}
 function empty(title='empty',hint) {return el('div',{class:'empty'},el('strong',{},t(title)),hint?t(hint):'');}
 function table(headings, rows) {return el('div',{class:'table-wrap'},el('table',{},el('thead',{},el('tr',{},headings.map(h=>el('th',{},t(h))))),el('tbody',{},rows)));}
-function modal(...children) {$('#dialog-body').replaceChildren(...children);$('#dialog').showModal();}
+function modal(...children) {$('#dialog-body').replaceChildren(el('div',{id:'dialog-notice',role:'alert',class:'notice-inline',hidden:true}),...children);if(typeof enhancePasswords==='function')enhancePasswords($('#dialog-body'));$('#dialog').showModal();}
 function applyLanguage() {
   document.documentElement.lang=language;document.documentElement.dir=language==='fa'?'rtl':'ltr';
   document.querySelectorAll('[data-i18n]').forEach(n=>n.textContent=t(n.dataset.i18n));
@@ -81,14 +81,15 @@ async function start() {
 $('#login-form').addEventListener('submit',async event=>{event.preventDefault();const form=event.currentTarget;const submit=form.querySelector('button[type=submit]');submit.disabled=true;try{await send('/login',{username:form.username.value,password:form.password.value});form.password.value='';await start();}catch(e){notice(e.message,true);}finally{submit.disabled=false;}});
 $('#logout').addEventListener('click',async()=>{try{await send('/logout',{});showLogin();}catch(e){notice(e.message,true);}});
 function navigation() {
-  const items=[['dashboard','devices.read'],['devices','devices.read'],['connections','audit.read'],['policies','policies.write'],['groups','devices.read'],['enrollment','enrollment.write'],['releases','releases.read'],['admins','admins.write'],['audit','audit.read']].filter(([,p])=>can(p));
+  const items=[['dashboard','devices.read'],['devices','devices.read'],['connections','audit.read'],['policies','policies.write'],['groups','devices.read'],['enrollment','enrollment.write'],['releases','releases.read'],['admins','admins.write'],['audit','audit.read'],['about',null]].filter(([,p])=>!p||can(p));
   if (!items.some(([key])=>key===view)) view=items[0]?.[0]||'';
   $('#navigation').replaceChildren(...items.map(([key])=>el('button',{class:view===key?'active':'',onclick:()=>{view=key;navigation();loadView();}},t(key))));
 }
 async function loadView() {
   $('#content').replaceChildren(el('p',{class:'muted'},t('loading')));
-  try {await ({dashboard:renderDashboard,connections:renderConnections,devices:renderDevices,policies:renderPolicies,groups:renderGroups,enrollment:renderEnrollment,releases:renderReleases,admins:renderAdmins,audit:renderAudit}[view]||(()=>$('#content').replaceChildren(empty())))();}
+  try {await ({dashboard:renderDashboard,connections:renderConnections,devices:renderDevices,policies:renderPolicies,groups:renderGroups,enrollment:renderEnrollment,releases:renderReleases,admins:renderAdmins,audit:renderAudit,about:renderAbout}[view]||(()=>$('#content').replaceChildren(empty())))();}
   catch(e){$('#content').replaceChildren(el('div',{class:'notice-inline'},e.message));notice(e.message,true);}
+  finally{if(typeof enhancePasswords==='function')enhancePasswords();}
 }
 async function fetchGroups(){groups=can('devices.read')?await api('/groups'):[];}
 const groupOptions=()=>[...(user.groups===null?[['',t('none')]]:[]),...groups.map(g=>[g.id,g.name])];
@@ -110,7 +111,7 @@ async function renderDevices() {
 }
 function deviceDialog(device){
   const group=select(groupOptions(),device.group_id),active=input('active','checkbox');active.checked=Boolean(device.active);
-  modal(el('h2',{},device.name),el('p',{class:'ltr muted'},device.id),field('group',group),el('label',{class:'check'},active,t('managementState')),el('p',{class:'muted small'},t('managementHint')),device.error?el('p',{class:'notice-inline'},device.error):el('span'),el('div',{class:'actions'},button('save',async()=>{try{await send('/devices/'+device.id,{group_id:group.value,active:active.checked},'PUT');$('#dialog').close();await renderDevices();notice(t('saved'));}catch(e){notice(e.message,true);}})));
+  modal(el('h2',{},device.name),el('p',{class:'ltr muted'},device.id),field('group',group),device.error?el('p',{class:'notice-inline'},device.error):el('span'),el('div',{class:'actions'},button('save',async()=>{try{await send('/devices/'+device.id,{group_id:group.value,active:Boolean(device.active)},'PUT');$('#dialog').close();await renderDevices();notice(t('saved'));}catch(e){notice(e.message,true);}})));
 }
 async function renderGroups(){
   await fetchGroups();const name=input('name');name.required=true;name.maxLength=100;
@@ -135,7 +136,7 @@ async function renderPolicies(){
     const save=button('save',async()=>{save.disabled=true;try{const options={};for(const [key,control] of values)if(control.value)options[key]=control.value;
       await send('/policies/'+encodeURIComponent(scope.value),{options,password:password.value||null,clear_password_override:clear.checked,expected_revision:policy.revision},'PUT');password.value='';await load();notice(t('saved'));
     }catch(e){notice(e.message,true);}finally{save.disabled=false;}});
-    editor.replaceChildren(el('section',{class:'card'},el('h2',{},t('access')),el('div',{class:'policy-grid'},rows)),el('section',{class:'card'},el('h2',{},t('newPassword')),el('p',{class:'muted'},t('passwordHint')),el('p',{class:'small cyan'},t(policy.has_password?'passwordSet':'passwordInherited')),password,el('label',{class:'check'},clear,t('clearPassword')),el('div',{class:'actions'},save)));
+    editor.replaceChildren(el('section',{class:'card'},el('h2',{},t('access')),el('div',{class:'policy-grid'},rows)),el('section',{class:'card'},el('h2',{},t('newPassword')),el('p',{class:'muted'},t('passwordHint')),el('p',{class:'small cyan'},t(policy.has_password?'passwordSet':'passwordInherited')),password,el('label',{class:'check'},clear,t('clearPassword')),el('div',{class:'actions'},save)));if(typeof enhancePasswords==='function')enhancePasswords(editor);
   }catch(e){notice(e.message,true);}};
   scope.addEventListener('change',load);
   $('#content').replaceChildren(heading('policies','policiesHint'),el('div',{class:'notice-inline'},t('policyNote')),el('div',{class:'card'},field('scope',scope)),editor);await load();
@@ -144,7 +145,7 @@ async function renderEnrollment(){
   await fetchGroups();const label=input('label');label.required=true;label.maxLength=100;const group=select(groupOptions());
   const hours=input('hours','number','24');hours.min='1';hours.max='168';const uses=input('uses','number','1');uses.min='1';uses.max='1000';
   const form=el('form',{class:'card form-grid',onsubmit:async e=>{e.preventDefault();try{const result=await send('/enrollments',{label:label.value,group_id:group.value,hours:Number(hours.value),uses:Number(uses.value)});
-    modal(el('h2',{},t('enrollment')),el('p',{class:'notice-inline'},t('tokenNotice')),el('h3',{},t('panelUrl')),el('code',{class:'secret ltr'},location.origin),el('h3',{},t('publicKey')),el('code',{class:'secret ltr'},result.public_key),el('h3',{},t('createToken')),el('code',{class:'secret ltr'},result.token),el('p',{class:'muted'},t('expires')+': '+date(result.expires)));
+    await renderEnrollment();modal(el('h2',{},t('enrollment')),el('p',{class:'notice-inline'},t('tokenNotice')),el('h3',{},t('panelUrl')),el('code',{class:'secret ltr'},location.origin),el('h3',{},t('publicKey')),el('code',{class:'secret ltr'},result.public_key),el('h3',{},t('createToken')),el('code',{class:'secret ltr'},result.token),el('p',{class:'muted'},t('expires')+': '+date(result.expires)));
   }catch(e){notice(e.message,true);}}},field('label',label),field('group',group),el('div',{class:'grid'},field('hours',hours),field('uses',uses)),el('button',{type:'submit'},t('createToken')));
   $('#content').replaceChildren(heading('enrollment','enrollHint'),form);
 }
@@ -214,7 +215,7 @@ async function renderDeviceDetails(identifier){
     const save=button('save',async()=>{try{await send('/devices/'+identifier,{group_id:group.value,active:active.checked,alias:alias.value,note:note.value},'PUT');notice(t('saved'));await renderDeviceDetails(identifier);}catch(e){notice(e.message,true);}});
     const launcher=can('devices.connect')?button('connect',async()=>{try{const result=await send('/devices/'+identifier+'/connect',{});modal(el('h2',{},t('connect')),el('p',{},t('connectHint')),el('a',{href:result.url,class:'launch-link'},t('connect')));}catch(e){notice(e.message,true);}}):null;
     const options=Object.entries(data.policy.options).map(([key,value])=>el('tr',{},el('td',{},catalog.find(o=>o.key===key)?.[language]||t(key)),el('td',{class:'ltr'},t(value))));
-    $('#content').replaceChildren(heading(m.alias||d.name,'connectHint',button('back',renderDevices,true)),el('div',{class:'device-title'},badge(data.online?'online':'offline',data.online?'':'offline'),el('code',{class:'ltr'},d.rustdesk_id||d.id),launcher),el('div',{class:'details-grid'},el('section',{class:'card'},info,d.error?el('p',{class:'notice-inline'},d.error):null),el('section',{class:'card'},can('devices.write')?el('div',{class:'form-grid'},field('alias',alias),field('note',note),field('group',group),el('label',{class:'check'},active,t('managementState')),el('p',{class:'muted small'},t('managementHint')),save):el('p',{},m.note||'—'))),el('section',{class:'card'},el('h2',{},t('effective')),table(['name','value'],options)),can('audit.read')?el('section',{class:'card'},el('h2',{},t('connections')),data.events.length?eventTable(data.events):empty('noData')):document.createDocumentFragment());
+    $('#content').replaceChildren(heading(m.alias||d.name,'connectHint',button('back',renderDevices,true)),el('div',{class:'device-title'},badge(data.online?'online':'offline',data.online?'':'offline'),el('code',{class:'ltr'},d.rustdesk_id||d.id),launcher),el('div',{class:'details-grid'},el('section',{class:'card'},info,d.error?el('p',{class:'notice-inline'},d.error):null),el('section',{class:'card'},can('devices.write')?el('div',{class:'form-grid'},field('alias',alias),field('note',note),field('group',group),save):el('p',{},m.note||'—'))),el('section',{class:'card'},el('h2',{},t('effective')),table(['name','value'],options)),can('audit.read')?el('section',{class:'card'},el('h2',{},t('connections')),data.events.length?eventTable(data.events):empty('noData')):document.createDocumentFragment());
   }catch(e){notice(e.message,true);}
 }
 applyLanguage();start().catch(()=>showLogin());

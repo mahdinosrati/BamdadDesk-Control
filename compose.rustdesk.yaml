@@ -1,0 +1,20 @@
+name: bamdaddesk-rustdesk
+services:
+  hbbs:
+    image: rustdesk/rustdesk-server:${RUSTDESK_VERSION:?Set version}
+    command: ["hbbs", "-r", "${RUSTDESK_HOST:?Set host}:${RUSTDESK_RELAY_PORT:?Set relay port}"]
+    restart: unless-stopped
+    ports:
+      - "${RUSTDESK_NAT_PORT:?Set NAT port}:21115"
+      - "${RUSTDESK_ID_PORT:?Set ID port}:21116"
+      - "${RUSTDESK_ID_PORT:?Set ID port}:21116/udp"
+    volumes:
+      - /var/lib/bamdaddesk-rustdesk/data:/root
+  hbbr:
+    image: rustdesk/rustdesk-server:${RUSTDESK_VERSION:?Set version}
+    command: ["hbbr"]
+    restart: unless-stopped
+    ports:
+      - "${RUSTDESK_RELAY_PORT:?Set relay port}:21117"
+    volumes:
+      - /var/lib/bamdaddesk-rustdesk/data:/root
